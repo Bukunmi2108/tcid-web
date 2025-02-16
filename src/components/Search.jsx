@@ -61,7 +61,7 @@ export default function Search(props) {
     setError(null); // Clear previous errors
 
     try {
-      const response = await axios.get(`https://tcid.vercel.app/terms?q=${input}`); // Correct query parameter
+      const response = await axios.get(`https://tcid.onrender.com/terms?q=${input}`); // Correct query parameter
       setSearchResult(response.data); // Access response data
       setSearchMode(true);
     } catch (error) {

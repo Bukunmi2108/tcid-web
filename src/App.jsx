@@ -6,6 +6,7 @@ import Search from './components/Search'
 import fontNames from './utils/font-names'
 import Word from './components/Word'
 import useFetch from './hooks/useFetch'
+import Footer from './components/Footer'
 
 function App() {
   const [currentFont, setCurrentFont] = useState(localStorage.getItem('current-font') ?? 'Serif')
@@ -21,7 +22,7 @@ function App() {
 
   async function fetchData(input) {
     useFetch(
-      `https://tcid.vercel.app/term/${input}`,
+      `https://tcid.onrender.com/term/${input}`,
       data => {
         setWord(data)
       },
@@ -48,6 +49,7 @@ function App() {
         <Search fetchData={fetchData} />
         {isError && errorElement}
         {!isLoading && !isError && <Word data={word} isError={isError} />}
+        <Footer />
       </div>
     </BrowserRouter>
   )

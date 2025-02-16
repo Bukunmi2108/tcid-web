@@ -15,7 +15,7 @@ export default function Word({ data }) {
       audioRef.current = new Audio(); // Create Audio object first
 
       audioRef.current.onerror = (error) => {
-        console.error("Audio Error:", error);
+        // console.error("Audio Error:", error);
         setAudioError("Error loading audio. Word not found or invalid URL.");
         audioRef.current = null; // Important: Clear the reference on error
       };
@@ -43,7 +43,6 @@ export default function Word({ data }) {
       audioRef.current.play();
     }
   };
-  console.log(data)
   const definition =  <Meaning meaning={data.definition} />
 
   return (
