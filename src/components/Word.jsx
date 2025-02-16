@@ -1,50 +1,66 @@
-import { useEffect, useRef } from 'react'
-
+import {useState, useEffect, useRef } from 'react'
 import Meaning from './Meaning'
 import playIcon from '../assets/images/icon-play.svg'
 import newWindowIcon from '../assets/images/icon-new-window.svg'
 
 export default function Word({ data }) {
-  const validPhonetics = data.phonetics?.find(phonetics => phonetics.text && phonetics.audio)
-  const audioRef = useRef(null)
+  const audioRef = useRef(null);
+  const [audioError, setAudioError] = useState(null); // State for audio error
 
   useEffect(() => {
-    audioRef.current = new Audio(validPhonetics?.audio)
-  }, [data])
+    const validPhonetics = `https://api.dictionaryapi.dev/media/pronunciations/en/${data.term}-us.mp3`;
 
-  function playAudio() {
-    audioRef.current.play()
-  }
+    if (data.term) {
+      setAudioError(null); // Clear any previous errors
+      audioRef.current = new Audio(); // Create Audio object first
 
-  const meanings = data.meanings.map((meaning, index) => <Meaning key={index} meaning={meaning} />)
+      audioRef.current.onerror = (error) => {
+        console.error("Audio Error:", error);
+        setAudioError("Error loading audio. Word not found or invalid URL.");
+        audioRef.current = null; // Important: Clear the reference on error
+      };
+
+      audioRef.current.onload = () => {
+        // Audio loaded successfully
+      };
+
+      audioRef.current.src = validPhonetics; // Set the source *after* setting error handler
+    } else {
+      setAudioError(null);
+      audioRef.current = null;
+    }
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, [data.term]);
+
+  const playAudio = () => {
+    if (audioRef.current) {
+      audioRef.current.play();
+    }
+  };
+  console.log(data)
+  const definition =  <Meaning meaning={data.definition} />
 
   return (
     <main className="mt-10 mb-[5.25rem] tablet:mt-11 tablet:mb-[7.75rem]">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-mobile-heading-l tablet:text-heading-l tablet:leading-heading-l font-bold tablet:mb-2">
-            {data.word}
+            {data.term}
           </h1>
-          <p className="text-purple text-body-m leading-body-m tablet:text-heading-m tablet:leading-heading-m">
-            {validPhonetics?.text}
-          </p>
         </div>
-        {validPhonetics?.audio && (
+        {!audioError && (
           <button aria-label="Play" onClick={playAudio}>
             <img src={playIcon} aria-hidden="true" alt="Play icon" className="w-[48px] tablet:w-[75px]" />
           </button>
         )}
       </div>
-      {meanings}
-      <div className="mt-8 tablet:mt-[2.375rem] pt-6 tablet:pt-[1.125rem] border-t-1 border-t-[1px] border-t-gray-2 dark:border-t-black-4 text-body-s leading-body-s tablet:flex items-center">
-        <div className="text-gray mb-2 underline tablet:mr-5 tablet:mb-0">Source</div>
-        <div className="flex">
-          <a href={data.sourceUrls[0]} className="underline mr-2" target="_blank">
-            {data.sourceUrls[0]}
-          </a>
-          <img src={newWindowIcon} alt="External link" />
-        </div>
-      </div>
+      {definition}
     </main>
   )
 }

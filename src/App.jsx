@@ -21,9 +21,9 @@ function App() {
 
   async function fetchData(input) {
     useFetch(
-      `https://api.dictionaryapi.dev/api/v2/entries/en/${input}`,
+      `https://tcid.vercel.app/term/${input}`,
       data => {
-        setWord(data[0])
+        setWord(data)
       },
       setIsLoading,
       setIsError
@@ -35,7 +35,7 @@ function App() {
       <div className="text-heading-l">😕</div>
       <h5 className="font-bold mt-5 tablet:mt-11">No Definitions Found</h5>
       <p className="mt-3 tablet:mt-6">
-        Sorry pal, we couldn't find definitions for the word you were looking for. You can try the search again at later
+        Sorry learned colleague, we couldn't find definitions for the you were looking for. You can try the search again at later
         time or head to the web instead.
       </p>
     </main>
